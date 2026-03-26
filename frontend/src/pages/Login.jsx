@@ -1,60 +1,105 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import GlassCard from '../components/GlassCard';
+import FloatingInput from '../components/FloatingInput';
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login, register } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [form, setForm] = useState({ email: '', password: '', alias: '' });
   
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate('/dashboard'); // mock login
+    setLoading(true);
+    setError('');
+    try {
+      if (isLogin) {
+        await login(form.email, form.password);
+      } else {
+        await register(form.alias, form.email, form.password, 'artist');
+      }
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.message || 'Authentication failed. Check credentials.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center -mt-16 relative overflow-hidden">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-gold/10 rounded-full blur-[100px] -z-10"></div>
+    <div className="min-h-screen flex items-center justify-center pt-24 pb-12 relative overflow-hidden px-4">
+      {/* Background Orbs */}
+      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-brand-gold/10 rounded-full blur-[120px] -z-10 animate-pulse"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[100px] -z-10"></div>
       
-      <div className="bg-brand-black border border-white/10 p-10 rounded-2xl shadow-2xl w-full max-w-md backdrop-blur-sm z-10">
-        <h2 className="text-3xl font-bold mb-2 text-center text-brand-gold">
-          {isLogin ? 'Welcome Back' : 'Create Account'}
-        </h2>
-        <p className="text-gray-400 text-center mb-8">
-          {isLogin ? 'Sign in to access your dashboard' : 'Join the UMyGod ecosystem'}
-        </p>
+      <GlassCard className="w-full max-w-md p-10 border-white/10" hover={false}>
+        <div className="text-center mb-10">
+          <h2 className="text-4xl font-black mb-3 text-white tracking-tight">
+            {isLogin ? 'Welcome ' : 'Start Your '}<span className="text-gradient-gold">{isLogin ? 'Back' : 'Legacy'}</span>
+          </h2>
+          <p className="text-brand-gray font-medium">
+            {isLogin ? 'Sign in to manage your music business' : 'Join the world\'s first creator-owned ecosystem'}
+          </p>
+        </div>
         
-        <form onSubmit={handleSubmit} className="space-y-6">
+        {error && (
+          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-xs font-bold text-center animate-shake">
+            {error}
+          </div>
+        )}
+        
+        <form onSubmit={handleSubmit} className="space-y-2">
           {!isLogin && (
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Username</label>
-              <input type="text" required className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold transition-colors" />
-            </div>
+            <FloatingInput 
+              label="Public Alias"
+              placeholder="e.g. CreatorName"
+              value={form.alias}
+              onChange={(e) => setForm({...form, alias: e.target.value})}
+              required
+            />
           )}
           
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
-            <input type="email" required className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold transition-colors" />
-          </div>
+          <FloatingInput 
+            label="Email Address"
+            type="email"
+            placeholder="name@example.com"
+            value={form.email}
+            onChange={(e) => setForm({...form, email: e.target.value})}
+            required
+          />
           
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
-            <input type="password" required className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold transition-colors" />
-          </div>
+          <FloatingInput 
+            label="Secret Key"
+            type="password"
+            placeholder="••••••••"
+            value={form.password}
+            onChange={(e) => setForm({...form, password: e.target.value})}
+            required
+          />
           
-          <button type="submit" className="w-full py-4 bg-brand-gold text-black font-bold rounded-xl hover:bg-brand-lightgold top-transition shadow-[0_0_15px_rgba(212,175,55,0.3)] hover:shadow-[0_0_20px_rgba(212,175,55,0.6)] transform hover:scale-[1.02] transition-all">
-            {isLogin ? 'Sign In' : 'Sign Up'}
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="w-full py-5 bg-brand-gold text-black font-black text-xs uppercase tracking-[0.2em] rounded-2xl hover:bg-brand-lightgold shadow-xl shadow-brand-gold/20 transform hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+          >
+            {loading ? 'Initializing...' : isLogin ? 'Initialize Session' : 'Create Catalyst'}
           </button>
         </form>
         
-        <div className="mt-6 text-center">
+        <div className="mt-8 text-center border-t border-white/5 pt-8">
           <button 
             type="button"
-            onClick={() => setIsLogin(!isLogin)}
-            className="text-gray-400 hover:text-white transition-colors text-sm"
+            onClick={() => { setIsLogin(!isLogin); setError(''); }}
+            className="text-brand-gray hover:text-white transition-colors text-xs font-bold uppercase tracking-widest"
           >
-            {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+            {isLogin ? "No Access? Request an Account" : "Registered? Identify Here"}
           </button>
         </div>
-      </div>
+      </GlassCard>
     </div>
   );
 };

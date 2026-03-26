@@ -22,7 +22,20 @@ const Product = sequelize.define('Product', {
   sellerId: {
     type: DataTypes.INTEGER,
     allowNull: false,
-  }
+  },
+  description: {
+    type: DataTypes.TEXT,
+  },
+  imageUrl: {
+    type: DataTypes.STRING,
+  },
+  digitalFileUrl: {
+    type: DataTypes.STRING,
+  },
+  stockQuantity: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
 });
 
 module.exports = Product;

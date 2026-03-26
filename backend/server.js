@@ -5,6 +5,8 @@ const { sequelize } = require('./models');
 const authRoutes = require('./routes/authRoutes');
 const musicRoutes = require('./routes/musicRoutes');
 const marketplaceRoutes = require('./routes/marketplaceRoutes');
+const networkingRoutes = require('./routes/networkingRoutes');
+const membershipRoutes = require('./routes/membershipRoutes');
 const path = require('path');
 
 dotenv.config();
@@ -19,6 +21,8 @@ app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 app.use('/api/auth', authRoutes);
 app.use('/api/music', musicRoutes);
 app.use('/api/products', marketplaceRoutes);
+app.use('/api/networking', networkingRoutes);
+app.use('/api/membership', membershipRoutes);
 
 app.get('/', (req, res) => {
   res.send('UMyGod API is running...');

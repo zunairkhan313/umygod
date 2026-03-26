@@ -24,7 +24,26 @@ const Song = sequelize.define('Song', {
   },
   metadata: {
     type: DataTypes.JSON,
-  }
+  },
+  audioUrl: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  coverArtUrl: {
+    type: DataTypes.STRING,
+  },
+  genre: {
+    type: DataTypes.STRING,
+  },
+  releaseDate: {
+    type: DataTypes.DATE,
+  },
+  bpm: {
+    type: DataTypes.INTEGER,
+  },
+  key: {
+    type: DataTypes.STRING,
+  },
 });
 
 module.exports = Song;

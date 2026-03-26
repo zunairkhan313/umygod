@@ -25,6 +25,19 @@ const User = sequelize.define('User', {
     type: DataTypes.ENUM('artist', 'fan', 'admin', 'producer'),
     defaultValue: 'fan',
   },
+  bio: {
+    type: DataTypes.TEXT,
+  },
+  profilePicture: {
+    type: DataTypes.STRING,
+  },
+  socialLinks: {
+    type: DataTypes.JSON,
+  },
+  balance: {
+    type: DataTypes.DECIMAL(10, 2),
+    defaultValue: 0.00,
+  },
 });
 
 module.exports = User;

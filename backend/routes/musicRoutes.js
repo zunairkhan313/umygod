@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { uploadMusic, getSongById, updateSong, deleteSong } = require('../controllers/musicController');
+const { uploadMusic, getSongs, getSongById, updateSong, deleteSong } = require('../controllers/musicController');
 const { protect } = require('../middleware/authMiddleware');
 const multer = require('multer');
 
@@ -15,6 +15,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+router.get('/', getSongs);
 router.post('/upload', protect, upload.single('track'), uploadMusic);
 
 router.route('/:id')

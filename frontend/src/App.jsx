@@ -5,22 +5,55 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Marketplace from './pages/Marketplace';
+import Memberships from './pages/Memberships';
+import Networking from './pages/Networking';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import Footer from './components/Footer';
+import MusicPlayer from './components/MusicPlayer';
+import { AuthProvider } from './context/AuthContext';
+import { PlayerProvider } from './context/PlayerContext';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
-    <Router>
-      <div className="min-h-screen flex flex-col font-sans">
-        <Navbar />
-        <main className="flex-grow pt-16">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/marketplace" element={<Marketplace />} />
-          </Routes>
-        </main>
-      </div>
-    </Router>
+    <AuthProvider>
+      <PlayerProvider>
+        <Router>
+          <div className="min-h-screen flex flex-col bg-brand-black selection:bg-brand-gold selection:text-black">
+            <Navbar />
+            <main className="flex-grow">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route 
+                  path="/dashboard" 
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route path="/marketplace" element={<Marketplace />} />
+                <Route path="/memberships" element={<Memberships />} />
+                <Route 
+                  path="/networking" 
+                  element={
+                    <ProtectedRoute>
+                      <Networking />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+              </Routes>
+            </main>
+            <Footer />
+            <MusicPlayer />
+          </div>
+        </Router>
+      </PlayerProvider>
+    </AuthProvider>
   );
 }
 

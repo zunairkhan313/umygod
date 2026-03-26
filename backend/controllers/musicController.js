@@ -1,20 +1,39 @@
-const { Song } = require('../models');
+const { Song, User } = require('../models');
 
-// @desc    Upload new music track (metadata + file mock)
+// @desc    Upload new music track
 // @route   POST /api/music/upload
 // @access  Private (Artist/Producer)
 const uploadMusic = async (req, res) => {
-  const { title, isrc, metadata } = req.body;
-  const filePath = req.file ? req.file.path : null;
-
+  const { title, isrc, metadata, genre, releaseDate, bpm, key, audioUrl, coverArtUrl } = req.body;
+  
   try {
     const song = await Song.create({
       title,
       artistId: req.user.id,
       isrc,
-      metadata: metadata ? JSON.parse(metadata) : { filePath }
+      genre,
+      releaseDate,
+      bpm,
+      key,
+      audioUrl: audioUrl || (req.file ? req.file.path : null),
+      coverArtUrl,
+      metadata: metadata ? (typeof metadata === 'string' ? JSON.parse(metadata) : metadata) : {}
     });
     res.status(201).json(song);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Get all songs with artist info
+// @route   GET /api/music
+// @access  Public
+const getSongs = async (req, res) => {
+  try {
+    const songs = await Song.findAll({
+      include: [{ model: User, as: 'artist', attributes: ['username', 'profilePicture'] }]
+    });
+    res.json(songs);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -25,7 +44,9 @@ const uploadMusic = async (req, res) => {
 // @access  Public
 const getSongById = async (req, res) => {
   try {
-    const song = await Song.findByPk(req.params.id, { include: ['artist'] });
+    const song = await Song.findByPk(req.params.id, { 
+      include: [{ model: User, as: 'artist', attributes: ['username', 'profilePicture', 'bio'] }] 
+    });
     if (song) {
       res.json(song);
     } else {
@@ -48,10 +69,16 @@ const updateSong = async (req, res) => {
       return res.status(401).json({ message: 'Not authorized' });
     }
 
-    const { title, isrc, metadata } = req.body;
+    const { title, isrc, metadata, genre, releaseDate, bpm, key, coverArtUrl } = req.body;
+    
     song.title = title || song.title;
     song.isrc = isrc || song.isrc;
-    song.metadata = metadata ? { ...song.metadata, ...metadata } : song.metadata;
+    song.genre = genre || song.genre;
+    song.releaseDate = releaseDate || song.releaseDate;
+    song.bpm = bpm || song.bpm;
+    song.key = key || song.key;
+    song.coverArtUrl = coverArtUrl || song.coverArtUrl;
+    song.metadata = metadata ? { ...song.metadata, ...(typeof metadata === 'string' ? JSON.parse(metadata) : metadata) } : song.metadata;
 
     const updatedSong = await song.save();
     res.json(updatedSong);
@@ -81,6 +108,7 @@ const deleteSong = async (req, res) => {
 
 module.exports = {
   uploadMusic,
+  getSongs,
   getSongById,
   updateSong,
   deleteSong

@@ -1,19 +1,55 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-black: #0a0a0a;
-  --color-brand-dark: #141414;
+  --color-brand-black: #050505;
+  --color-brand-dark: #121212;
   --color-brand-gold: #d4af37;
   --color-brand-lightgold: #f3e5ab;
   --color-brand-white: #ffffff;
-  --color-brand-gray: #888888;
-  --font-sans: 'Inter', sans-serif;
+  --color-brand-gray: #a0a0a0;
+  --font-sans: 'Poppins', sans-serif;
 }
 
 body {
-  background-color: var(--color-brand-black);
+  background: radial-gradient(circle at top right, #1a1a1a, #050505);
   color: var(--color-brand-white);
   font-family: var(--font-sans);
+  min-height: 100vh;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  transform: translateY(-4px);
+}
+
+.text-gradient-gold {
+  background: linear-gradient(to right, #d4af37, #f3e5ab);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 ::-webkit-scrollbar {
@@ -28,4 +64,21 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #d4af37;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.5s infinite;
+}
+
+.text-gradient-gold {
+  background: linear-gradient(to right, #d4af37, #f3e5ab);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
