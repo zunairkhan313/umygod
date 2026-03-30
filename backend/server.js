@@ -1,3 +1,13 @@
+if (!Object.hasOwn) {
+    Object.defineProperty(Object, "hasOwn", {
+        value: function (instance, prop) {
+            return Object.prototype.hasOwnProperty.call(instance, prop);
+        },
+        configurable: true,
+        enumerable: false,
+        writable: true
+    });
+}
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -25,14 +35,14 @@ app.use('/api/networking', networkingRoutes);
 app.use('/api/membership', membershipRoutes);
 
 app.get('/', (req, res) => {
-  res.send('UMyGod API is running...');
+    res.send('UMyGod API is running...');
 });
 
 const PORT = process.env.PORT || 5000;
 
 sequelize.sync({ alter: true }).then(() => {
-  console.log('Database connected');
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    console.log('Database connected');
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }).catch(err => {
-  console.error('Database connection failed', err);
+    console.error('Database connection failed', err);
 });

@@ -9,7 +9,8 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   // Configure axios defaults
-  axios.defaults.baseURL = 'http://localhost:5000';
+  // axios.defaults.baseURL = 'http://localhost:5000';
+  axios.defaults.baseURL = 'https://umygod.expertcodecraft.com';
 
   useEffect(() => {
     if (token) {
